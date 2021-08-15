@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">IOIOFish</string>
+    <string name="backPressedHintText">Press again to close the app.</string>
+</resources>
