@@ -91,17 +91,20 @@ public class Gyrometer implements SensorEventListener {
                 float[] orientation = new float[3];
                 SensorManager.getOrientation(adjustedRotationMatrix, orientation);
 
-                float azimuth = (float) Math.toDegrees(orientation[0]);
-                float pitch = (float) Math.toDegrees(orientation[1]);
-                float roll = (float) Math.toDegrees(orientation[2]);
+                float azimuth = LowPassFilter.filter((float) Math.toDegrees(orientation[0]), rotationData[0], .8f);
+                float pitch = LowPassFilter.filter((float) Math.toDegrees(orientation[1]), rotationData[1], .8f);
+                float roll = LowPassFilter.filter((float) Math.toDegrees(orientation[2]), rotationData[2], .8f);
 
-                rotationData[0] = LowPassFilter.filter(azimuth, rotationData[0], .8f);
-                rotationData[1] = LowPassFilter.filter(pitch, rotationData[1], .8f);
-                rotationData[2] = LowPassFilter.filter(roll, rotationData[2], .8f);
+                // we're just interested in pitch changes this time
+                boolean dataChanged = (int) pitch != (int) rotationData[1];
 
-                if (listener != null) {
-                    listener.onRotationChanged(rotationData[0], rotationData[1], rotationData[2]);
+                if (listener != null && dataChanged) {
+                    listener.onRotationChanged(azimuth, pitch, roll);
                 }
+
+                rotationData[0] = azimuth;
+                rotationData[1] = pitch;
+                rotationData[2] = roll;
             }
         }
     }

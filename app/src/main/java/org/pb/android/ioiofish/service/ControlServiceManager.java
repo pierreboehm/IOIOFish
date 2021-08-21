@@ -30,6 +30,7 @@ public class ControlServiceManager {
     }
 
     private void startAndBindIOControlService() {
+        context.startService(IOIOControlService_.intent(context).get());
         context.bindService(IOIOControlService_.intent(context).get(), serviceConnection, Context.BIND_AUTO_CREATE);
     }
 

@@ -14,7 +14,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.pb.android.ioiofish.event.Events;
 import org.pb.android.ioiofish.gyroscope.Gyrometer;
 
-import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.exception.ConnectionLostException;
@@ -32,23 +31,46 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
     @Bean
     Gyrometer gyrometer;
 
+    private boolean rotationDetected = false;
+
     @Override
     protected IOIOLooper createIOIOLooper() {
         return new BaseIOIOLooper() {
 
             private DigitalOutput led_;
-            private AnalogInput analogInput_;
 
             @Override
-            protected void setup() throws ConnectionLostException, InterruptedException {
-                led_ = ioio_.openDigitalOutput(IOIO.LED_PIN);
-                //analogInput_ = ioio_.openAnalogInput(Mode);
+            protected void setup() throws ConnectionLostException {
+                Log.d(TAG, "setup");
+                showVersionInformation();
 
+                led_ = ioio_.openDigitalOutput(IOIO.LED_PIN, true);
             }
 
             @Override
             public void loop() throws ConnectionLostException, InterruptedException {
-                flash(led_, 500);
+                if (rotationDetected) {
+                    flashLed(led_, 10);
+                }
+            }
+
+            @Override
+            public void disconnected() {
+                Log.d(TAG, "disconnected");
+            }
+
+            @Override
+            public void incompatible() {
+                Log.d(TAG, "incompatible");
+            }
+
+            private void showVersionInformation() {
+                String versionInformation = String.format("%s %s %s %s", ioio_.getImplVersion(IOIO.VersionType.IOIOLIB_VER),
+                        ioio_.getImplVersion(IOIO.VersionType.APP_FIRMWARE_VER),
+                        ioio_.getImplVersion(IOIO.VersionType.BOOTLOADER_VER),
+                        ioio_.getImplVersion(IOIO.VersionType.HARDWARE_VER));
+
+                Log.d(TAG, versionInformation);
             }
         };
     }
@@ -67,17 +89,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int result = super.onStartCommand(intent, flags, startId);
-        Log.i(TAG, "start result: " + result + " (action: " + intent.getAction() + ", data: " + intent.getDataString() + ")");
-
-        if (intent != null && intent.getAction() != null && intent.getAction().equals("stop")) {
-            stopSelf();
-        } else {
-            // Service starting.
-            Log.d(TAG, "service starting");
-        }
-
-        return result;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable
@@ -87,15 +99,12 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
     }
 
     @UiThread
-    public void flash(DigitalOutput led, int waitInMillis) throws ConnectionLostException, InterruptedException {
-        int halfWait = waitInMillis / 4;
-
-        led.write(true);
-        Thread.sleep(halfWait);
+    public void flashLed(DigitalOutput led, int waitInMillis) throws ConnectionLostException, InterruptedException {
         led.write(false);
-        Thread.sleep(halfWait);
+        rotationDetected = false;
 
         Thread.sleep(waitInMillis);
+        led.write(true);
     }
 
     public void startService() {
@@ -111,6 +120,8 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
     @Override
     public void onRotationChanged(float azimuth, float pitch, float roll) {
+        rotationDetected = true;
+
         if (gyrometer.hasListener()) {
             EventBus.getDefault().post(new Events.RotationChangedEvent(azimuth, pitch, roll));
         }
