@@ -7,20 +7,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
+import org.pb.android.ioiofish.fragment.InfoFragment;
+import org.pb.android.ioiofish.fragment.InfoFragment_;
 import org.pb.android.ioiofish.service.ControlServiceManager;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
     @Bean
     ControlServiceManager controlServiceManager;
 
     private Toast closeAppToast = null;
 
+    @AfterViews
+    public void initViews() {
+        InfoFragment infoFragment = InfoFragment_.builder().build();
+        setFragment(infoFragment, InfoFragment.TAG);
+    }
 
     @Override
     public void onResume() {
