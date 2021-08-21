@@ -1,17 +1,18 @@
 package org.pb.android.ioiofish.service;
 
-import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.Build;
+import android.os.Binder;
 import android.os.IBinder;
-import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
-import org.androidannotations.annotations.SystemService;
+import org.greenrobot.eventbus.EventBus;
+import org.pb.android.ioiofish.event.Events;
+import org.pb.android.ioiofish.gyroscope.Gyrometer;
 
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
@@ -22,27 +23,14 @@ import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOService;
 
 @EService
-public class IOIOControlService extends IOIOService {
+public class IOIOControlService extends IOIOService implements Gyrometer.RotationChangeListener {
 
     private static final String TAG = IOIOControlService.class.getSimpleName();
 
-    @SystemService
-    NotificationManager nm;
+    public IBinder binder = new LocalBinder();
 
-    @SystemService
-    Vibrator vibrator;
-
-    private enum VibrationTypes {
-        TINY(50),
-        SHORT(100),
-        LONG(200);
-
-        int typeNumber;
-
-        VibrationTypes(int typeNumber) {
-            this.typeNumber = typeNumber;
-        }
-    }
+    @Bean
+    Gyrometer gyrometer;
 
     @Override
     protected IOIOLooper createIOIOLooper() {
@@ -56,8 +44,6 @@ public class IOIOControlService extends IOIOService {
                 led_ = ioio_.openDigitalOutput(IOIO.LED_PIN);
                 //analogInput_ = ioio_.openAnalogInput(Mode);
 
-                Log.d(TAG, "select LED_PIN for DigitalOutput");
-                vibrate(VibrationTypes.SHORT);
             }
 
             @Override
@@ -97,7 +83,7 @@ public class IOIOControlService extends IOIOService {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
 
     @UiThread
@@ -110,16 +96,29 @@ public class IOIOControlService extends IOIOService {
         Thread.sleep(halfWait);
 
         Thread.sleep(waitInMillis);
-        vibrate(VibrationTypes.TINY);
     }
 
-    @UiThread
-    private void vibrate(VibrationTypes type) {
-        int typeNumber = type.typeNumber;
-        if (Build.VERSION.SDK_INT >= 26) {
-            //vibrator.vibrate(VibrationEffect.createOneShot(typeNumber, VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-            //vibrator.vibrate(typeNumber);
+    public void startService() {
+        gyrometer.setListener(this);
+        gyrometer.start();
+    }
+
+    public void stopService() {
+        gyrometer.setListener(null);
+        gyrometer.stop();
+        stopSelf();
+    }
+
+    @Override
+    public void onRotationChanged(float azimuth, float pitch, float roll) {
+        if (gyrometer.hasListener()) {
+            EventBus.getDefault().post(new Events.RotationChangedEvent(azimuth, pitch, roll));
+        }
+    }
+
+    public class LocalBinder extends Binder {
+        public IOIOControlService getService() {
+            return IOIOControlService.this;
         }
     }
 }
