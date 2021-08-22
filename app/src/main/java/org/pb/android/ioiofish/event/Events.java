@@ -24,4 +24,16 @@ public class Events {
         }
     }
 
+    public static class PluggedStateChangedEvent {
+        private final boolean plugged;
+
+        public PluggedStateChangedEvent(boolean plugged) {
+            this.plugged = plugged;
+        }
+
+        public boolean isPlugged() {
+            return plugged;
+        }
+    }
+
 }

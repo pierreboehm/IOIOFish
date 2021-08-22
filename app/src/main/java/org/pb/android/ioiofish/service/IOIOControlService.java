@@ -12,6 +12,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
 import org.greenrobot.eventbus.EventBus;
 import org.pb.android.ioiofish.event.Events;
+import org.pb.android.ioiofish.flow.FlowManager;
 import org.pb.android.ioiofish.gyroscope.Gyrometer;
 
 import ioio.lib.api.DigitalOutput;
@@ -26,53 +27,19 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
     private static final String TAG = IOIOControlService.class.getSimpleName();
 
-    public IBinder binder = new LocalBinder();
-
     @Bean
     Gyrometer gyrometer;
 
+    @Bean
+    FlowManager flowManager;
+
+    public IBinder binder = new LocalBinder();
     private boolean rotationDetected = false;
 
-    @Override
-    protected IOIOLooper createIOIOLooper() {
-        return new BaseIOIOLooper() {
-
-            private DigitalOutput led_;
-
-            @Override
-            protected void setup() throws ConnectionLostException {
-                Log.d(TAG, "setup");
-                showVersionInformation();
-
-                led_ = ioio_.openDigitalOutput(IOIO.LED_PIN, true);
-            }
-
-            @Override
-            public void loop() throws ConnectionLostException, InterruptedException {
-                if (rotationDetected) {
-                    flashLed(led_, 10);
-                }
-            }
-
-            @Override
-            public void disconnected() {
-                Log.d(TAG, "disconnected");
-            }
-
-            @Override
-            public void incompatible() {
-                Log.d(TAG, "incompatible");
-            }
-
-            private void showVersionInformation() {
-                String versionInformation = String.format("%s %s %s %s", ioio_.getImplVersion(IOIO.VersionType.IOIOLIB_VER),
-                        ioio_.getImplVersion(IOIO.VersionType.APP_FIRMWARE_VER),
-                        ioio_.getImplVersion(IOIO.VersionType.BOOTLOADER_VER),
-                        ioio_.getImplVersion(IOIO.VersionType.HARDWARE_VER));
-
-                Log.d(TAG, versionInformation);
-            }
-        };
+    public class LocalBinder extends Binder {
+        public IOIOControlService getService() {
+            return IOIOControlService.this;
+        }
     }
 
     @Override
@@ -98,13 +65,14 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
         return binder;
     }
 
-    @UiThread
-    public void flashLed(DigitalOutput led, int waitInMillis) throws ConnectionLostException, InterruptedException {
-        led.write(false);
-        rotationDetected = false;
+    @Override
+    public void onRotationChanged(float azimuth, float pitch, float roll) {
+        rotationDetected = true;
+        flowManager.updateRotation(azimuth, pitch, roll);
 
-        Thread.sleep(waitInMillis);
-        led.write(true);
+        if (gyrometer.hasListener()) {
+            EventBus.getDefault().post(new Events.RotationChangedEvent(azimuth, pitch, roll));
+        }
     }
 
     public void startService() {
@@ -118,18 +86,63 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
         stopSelf();
     }
 
-    @Override
-    public void onRotationChanged(float azimuth, float pitch, float roll) {
-        rotationDetected = true;
+    // --- IOIO-board related code
+    // TODO: find a way to implement it in an separate file (IOIOLooperWrapper does not work :|)
 
-        if (gyrometer.hasListener()) {
-            EventBus.getDefault().post(new Events.RotationChangedEvent(azimuth, pitch, roll));
-        }
+    @Override
+    protected IOIOLooper createIOIOLooper() {
+        return new BaseIOIOLooper() {
+
+            private DigitalOutput statusLed;
+
+            @Override
+            protected void setup() throws ConnectionLostException {
+                EventBus.getDefault().postSticky(new Events.PluggedStateChangedEvent(true));
+
+                Log.d(TAG, "setup");
+                showVersionInformation();
+
+                statusLed = ioio_.openDigitalOutput(IOIO.LED_PIN, true);
+                // TODO: flowManager.setup(configuration);
+                // Configuration is prepared with a set of pins that will be used.
+            }
+
+            @Override
+            public void loop() throws ConnectionLostException, InterruptedException {
+                if (rotationDetected) {
+                    flashLed(statusLed, 10);
+                }
+            }
+
+            @Override
+            public void disconnected() {
+                EventBus.getDefault().postSticky(new Events.PluggedStateChangedEvent(false));
+                Log.d(TAG, "disconnected");
+            }
+
+            @Override
+            public void incompatible() {
+                Log.d(TAG, "incompatible");
+            }
+
+            private void showVersionInformation() {
+                String versionInformation = String.format("library: %s, firmware: %s, bootloader: %s, hardware: %s",
+                        ioio_.getImplVersion(IOIO.VersionType.IOIOLIB_VER),
+                        ioio_.getImplVersion(IOIO.VersionType.APP_FIRMWARE_VER),
+                        ioio_.getImplVersion(IOIO.VersionType.BOOTLOADER_VER),
+                        ioio_.getImplVersion(IOIO.VersionType.HARDWARE_VER));
+
+                Log.d(TAG, versionInformation);
+            }
+        };
     }
 
-    public class LocalBinder extends Binder {
-        public IOIOControlService getService() {
-            return IOIOControlService.this;
-        }
+    @UiThread
+    public void flashLed(DigitalOutput led, int waitInMillis) throws ConnectionLostException, InterruptedException {
+        led.write(false);
+        rotationDetected = false;
+
+        Thread.sleep(waitInMillis);
+        led.write(true);
     }
 }
