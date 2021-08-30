@@ -36,4 +36,19 @@ public class Events {
         }
     }
 
+    public static class ValueChangedEvent {
+        private final String value;
+
+        public ValueChangedEvent(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getIntValue() {
+            return Integer.parseInt(value);
+        }
+    }
 }
