@@ -6,8 +6,13 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.pb.android.ioiofish.flow.FlowConfiguration;
+import org.pb.android.ioiofish.flow.FlowManager;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class ControlServiceManager {
@@ -17,10 +22,14 @@ public class ControlServiceManager {
     @RootContext
     Context context;
 
+    @Bean
+    FlowManager flowManager;
+
     private IOIOControlService controlService;
 
-    public void startService() {
+    public void startService(@Nullable FlowConfiguration flowConfiguration) {
         Log.d(TAG, "start control-service");
+        flowManager.setup(flowConfiguration);
         startAndBindIOControlService();
     }
 

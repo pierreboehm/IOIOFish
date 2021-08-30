@@ -1,14 +1,63 @@
 package org.pb.android.ioiofish.flow;
 
 import org.androidannotations.annotations.EBean;
+import org.pb.android.ioiofish.pin.IOIO_Pin;
+
+import java.util.List;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class FlowManager {
 
+    public static final int SERVO_POSITION_LEFT = 1000;
+    public static final int SERVO_POSITION_CENTER = 1500;
+    public static final int SERVO_POSITION_RIGHT = 2000;
+
+    public enum PinType {
+        ANALOG_IN, DIGITAL_IN, DIGITAL_OUT
+    }
+
+    public enum PinConfiguration {
+        LEFT_SERVO(10, PinType.DIGITAL_OUT),
+        RIGHT_SERVO(11, PinType.DIGITAL_OUT),
+        LEFT_EAR(40, PinType.ANALOG_IN),
+        RIGHT_EAR(41, PinType.ANALOG_IN),
+        TOUCH_FRONT_LEFT(21, PinType.DIGITAL_IN),
+        TOUCH_FRONT_RIGHT(20, PinType.DIGITAL_IN),
+        TOUCH_FRONT_TOP(19, PinType.DIGITAL_IN),
+        TOUCH_FRONT_BOTTOM(22, PinType.DIGITAL_IN),
+        TOUCH_SIDE_LEFT(23, PinType.DIGITAL_IN),
+        TOUCH_SIDE_RIGHT(18, PinType.DIGITAL_IN);
+
+        public final int pin;
+        private final PinType pinType;
+
+        PinConfiguration(int pin, PinType pinType) {
+            this.pin = pin;
+            this.pinType = pinType;
+        }
+    }
+
+    private FlowConfiguration flowConfiguration;
     private float azimuth, pitch, roll;
 
-    public void setup(FlowConfiguration configuration) {
+    public void setup(FlowConfiguration flowConfiguration) {
+        this.flowConfiguration = flowConfiguration;
+    }
 
+    public FlowConfiguration getFlowConfiguration() {
+        return flowConfiguration;
+    }
+
+    public List<IOIO_Pin> getAnalogInputs() {
+        return flowConfiguration.analogInputPins;
+    }
+
+    public List<IOIO_Pin> getDigitalInputs() {
+        return flowConfiguration.digitalInputPins;
+    }
+
+    public List<IOIO_Pin> getDigitalOutputs() {
+        return flowConfiguration.digitalOutputPins;
     }
 
     public void updateRotation(float azimuth, float pitch, float roll) {
