@@ -22,9 +22,9 @@ public class FlowConfiguration {
 
     public static class Builder {
 
-        private List<IOIO_Pin> analogInputPins;
-        private List<IOIO_Pin> digitalInputPins;
-        private List<IOIO_Pin> digitalOutputPins;
+        private List<IOIO_Pin> analogInputPins = new ArrayList<>();
+        private List<IOIO_Pin> digitalInputPins = new ArrayList<>();
+        private List<IOIO_Pin> digitalOutputPins = new ArrayList<>();
 
         public Builder addAnalogInputPin(FlowManager.PinConfiguration pinConfiguration) {
             AnalogInputPin analogInputPin = new AnalogInputPin(pinConfiguration);

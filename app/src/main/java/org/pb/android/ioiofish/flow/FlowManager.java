@@ -1,5 +1,7 @@
 package org.pb.android.ioiofish.flow;
 
+import androidx.annotation.Nullable;
+
 import org.androidannotations.annotations.EBean;
 import org.pb.android.ioiofish.pin.IOIO_Pin;
 
@@ -7,6 +9,11 @@ import java.util.List;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class FlowManager {
+
+    public static final int SERVO_DEFAULT_PULSE_WIDTH = 50;
+
+    public static final int SERVO_LEFT_DEFAULT_PIN = 10;
+    public static final int SERVO_RIGHT_DEFAULT_PIN = 11;
 
     public static final int SERVO_POSITION_LEFT = 1000;
     public static final int SERVO_POSITION_CENTER = 1500;
@@ -17,8 +24,8 @@ public class FlowManager {
     }
 
     public enum PinConfiguration {
-        LEFT_SERVO(10, PinType.DIGITAL_OUT),
-        RIGHT_SERVO(11, PinType.DIGITAL_OUT),
+        LEFT_SERVO(SERVO_LEFT_DEFAULT_PIN, PinType.DIGITAL_OUT),
+        RIGHT_SERVO(SERVO_RIGHT_DEFAULT_PIN, PinType.DIGITAL_OUT),
         LEFT_EAR(40, PinType.ANALOG_IN),
         RIGHT_EAR(41, PinType.ANALOG_IN),
         TOUCH_FRONT_LEFT(21, PinType.DIGITAL_IN),
@@ -60,10 +67,20 @@ public class FlowManager {
         return flowConfiguration.digitalOutputPins;
     }
 
+    @Nullable
+    public IOIO_Pin getServo(PinConfiguration pinConfiguration) {
+        for (IOIO_Pin ioioPin : getDigitalOutputs()) {
+            if (ioioPin.getPinConfiguration().equals(pinConfiguration)) {
+                return ioioPin;
+            }
+        }
+
+        return null;
+    }
+
     public void updateRotation(float azimuth, float pitch, float roll) {
         this.azimuth = azimuth;
         this.pitch = pitch;
         this.roll = roll;
     }
-
 }
