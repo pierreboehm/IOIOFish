@@ -14,9 +14,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.pb.android.ioiofish.event.Events;
 import org.pb.android.ioiofish.flow.FlowManager;
 import org.pb.android.ioiofish.gyroscope.Gyrometer;
+import org.pb.android.ioiofish.pin.IOIO_Pin;
 
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
+import ioio.lib.api.PwmOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
@@ -25,6 +27,7 @@ import ioio.lib.util.android.IOIOService;
 @EService
 public class IOIOControlService extends IOIOService implements Gyrometer.RotationChangeListener {
 
+    public static final int DEFAULT_SLEEP_IN_MILLIS = 10;
     private static final String TAG = IOIOControlService.class.getSimpleName();
 
     @Bean
@@ -35,6 +38,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
     public IBinder binder = new LocalBinder();
     private boolean rotationDetected = false;
+    private long servoStep = 0L;
 
     public class LocalBinder extends Binder {
         public IOIOControlService getService() {
@@ -94,6 +98,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
         return new BaseIOIOLooper() {
 
             private DigitalOutput statusLed;
+            private PwmOutput leftServo, rightServo;
 
             @Override
             protected void setup() throws ConnectionLostException {
@@ -103,20 +108,44 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                 showVersionInformation();
 
                 statusLed = ioio_.openDigitalOutput(IOIO.LED_PIN, true);
-                // TODO: flowManager.setup(configuration);
-                // Configuration is prepared with a set of pins that will be used.
+
+                // Configuration is already prepared with a set of pins that will be used.
+                IOIO_Pin leftServoDefinition = flowManager.getServo(FlowManager.PinConfiguration.LEFT_SERVO);
+                IOIO_Pin rightServoDefinition = flowManager.getServo(FlowManager.PinConfiguration.RIGHT_SERVO);
+
+                int leftServoPin = leftServoDefinition == null
+                        ? FlowManager.SERVO_LEFT_DEFAULT_PIN
+                        : leftServoDefinition.getPinNumber();
+
+                int rightServoPin = rightServoDefinition == null
+                        ? FlowManager.SERVO_RIGHT_DEFAULT_PIN
+                        : rightServoDefinition.getPinNumber();
+
+                leftServo = ioio_.openPwmOutput(
+                        leftServoPin,
+                        FlowManager.SERVO_DEFAULT_PULSE_WIDTH);
+                rightServo = ioio_.openPwmOutput(
+                        rightServoPin,
+                        FlowManager.SERVO_DEFAULT_PULSE_WIDTH);
             }
 
             @Override
             public void loop() throws ConnectionLostException, InterruptedException {
                 if (rotationDetected) {
-                    flashLed(statusLed, 10);
+                    flashLed(statusLed, DEFAULT_SLEEP_IN_MILLIS);
+                    runServos(leftServo, rightServo);
+                    rotationDetected = false;
                 }
             }
 
             @Override
             public void disconnected() {
                 EventBus.getDefault().postSticky(new Events.PluggedStateChangedEvent(false));
+
+                statusLed.close();
+                leftServo.close();
+                rightServo.close();
+
                 Log.d(TAG, "disconnected");
             }
 
@@ -140,9 +169,17 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
     @UiThread
     public void flashLed(DigitalOutput led, int waitInMillis) throws ConnectionLostException, InterruptedException {
         led.write(false);
-        rotationDetected = false;
-
         Thread.sleep(waitInMillis);
         led.write(true);
+    }
+
+    @UiThread
+    public void runServos(PwmOutput leftServo, PwmOutput rightServo) throws ConnectionLostException, InterruptedException {
+        leftServo.setPulseWidth((float) (Math.sin((double) servoStep)) + 1f);
+        rightServo.setPulseWidth((float) (Math.cos((double) servoStep)) + 1f);
+
+        servoStep++;
+
+        Thread.sleep(DEFAULT_SLEEP_IN_MILLIS);
     }
 }
