@@ -16,6 +16,8 @@ import org.androidannotations.annotations.UiThread;
 @EView
 public class BalanceView extends View {
 
+    private static final String TAG = BalanceView.class.getSimpleName();
+
     private Paint color;
     private float currentValue;
 
@@ -29,7 +31,8 @@ public class BalanceView extends View {
 
         color = new Paint();
         color.setColor(Color.YELLOW);
-        color.setStyle(Paint.Style.FILL);
+        color.setStyle(Paint.Style.STROKE);
+        color.setStrokeWidth(1f);
     }
 
     @Override
@@ -50,10 +53,18 @@ public class BalanceView extends View {
         float yCenter = (float) canvas.getHeight() / 2f;
         float y = (yCenter * currentValue) / 90f;
 
-        if (y < 0f) {
-            canvas.drawRect(0f, yCenter, canvas.getWidth(), yCenter + y, color);
-        } else {
-            canvas.drawRect(0f, yCenter + y, canvas.getWidth(), yCenter, color);
+        // rotate away, values become positive (top level)
+        // rotate towards, values become negative (bottom level)
+
+        if (y > 0f) {
+            for (float yPos = yCenter - 4f; yPos > yCenter - y; yPos -= 8f) {
+                canvas.drawLine(0f, yPos, canvas.getWidth(), yPos, color);
+            }
+        } else if (y < 0f) {
+            for (float yPos = yCenter + 4f; yPos < yCenter - y; yPos += 8f) {
+                canvas.drawLine(0f, yPos, canvas.getWidth(), yPos, color);
+            }
         }
+
     }
 }

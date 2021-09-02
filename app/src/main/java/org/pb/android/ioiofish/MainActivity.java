@@ -13,8 +13,8 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.pb.android.ioiofish.flow.FlowConfiguration;
 import org.pb.android.ioiofish.flow.FlowManager;
-import org.pb.android.ioiofish.fragment.CalibrateFragment;
-import org.pb.android.ioiofish.fragment.CalibrateFragment_;
+import org.pb.android.ioiofish.fragment.InfoFragment;
+import org.pb.android.ioiofish.fragment.InfoFragment_;
 import org.pb.android.ioiofish.service.ControlServiceManager;
 
 @EActivity(R.layout.activity_main)
@@ -29,11 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
     @AfterViews
     public void initViews() {
-        //InfoFragment infoFragment = InfoFragment_.builder().build();
-        //setFragment(infoFragment, InfoFragment.TAG);
+        InfoFragment infoFragment = InfoFragment_.builder().build();
+        setFragment(infoFragment, InfoFragment.TAG);
 
-        CalibrateFragment calibrateFragment = CalibrateFragment_.builder().build();
-        setFragment(calibrateFragment, CalibrateFragment.TAG);
+        //CalibrateFragment calibrateFragment = CalibrateFragment_.builder().build();
+        //setFragment(calibrateFragment, CalibrateFragment.TAG);
     }
 
     @Override
