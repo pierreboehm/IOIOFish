@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -7,21 +8,63 @@
         android:id="@+id/ivPluggedState"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_unplugged"
-        android:background="#40ffffff" />
+        android:background="#40ffffff"
+        tools:ignore="ContentDescription" />
 
     <org.pb.android.ioiofish.ui.BalanceView_
         android:id="@+id/balanceView"
         android:layout_width="20dp"
         android:layout_height="200dp"
         android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
         android:background="#20fff000" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="20dp">
+
+        <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:layout_width="10dp"
+            android:layout_height="40dp"
+            android:background="@color/black" />
+
+        <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:layout_width="10dp"
+            android:layout_height="40dp"
+            android:background="@color/black" />
+
+        <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:layout_width="10dp"
+            android:layout_height="40dp"
+            android:background="@color/black" />
+
+        <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:layout_width="10dp"
+            android:layout_height="40dp"
+            android:background="@color/black" />
+
+        <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:layout_width="10dp"
+            android:layout_height="40dp"
+            android:background="@color/black" />
+
+        <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:id="@+id/signal6"
+            android:layout_width="10dp"
+            android:layout_height="40dp"
+            android:background="@color/black" />
+
+    </LinearLayout>
 
 </RelativeLayout>
