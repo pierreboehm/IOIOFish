@@ -57,6 +57,7 @@ public class InfoFragment extends Fragment {
         }
     }
 
+    // FIXME: !!!JUST FOR TEST PURPOSES ONLY !!!
     @Click(R.id.ivPluggedState)
     public void onPluggedStateViewClicked() {
         signalLevelView6.setSignal();
