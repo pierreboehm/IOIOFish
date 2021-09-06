@@ -32,7 +32,7 @@ public class FlowConfiguration {
             return this;
         }
 
-        public Builder addDigitalInputPin(int pinNumber, FlowManager.PinConfiguration pinConfiguration) {
+        public Builder addDigitalInputPin(FlowManager.PinConfiguration pinConfiguration) {
             DigitalInputPin digitalInputPin = new DigitalInputPin(pinConfiguration);
             digitalInputPins.add(digitalInputPin);
             return this;

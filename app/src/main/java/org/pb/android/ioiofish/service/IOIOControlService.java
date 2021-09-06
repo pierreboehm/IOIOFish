@@ -16,6 +16,11 @@ import org.pb.android.ioiofish.flow.FlowManager;
 import org.pb.android.ioiofish.gyroscope.Gyrometer;
 import org.pb.android.ioiofish.pin.IOIO_Pin;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ioio.lib.api.Closeable;
+import ioio.lib.api.DigitalInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.PwmOutput;
@@ -37,6 +42,8 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
     FlowManager flowManager;
 
     public IBinder binder = new LocalBinder();
+
+    private List<Closeable> openedPins = new ArrayList<>();
     private boolean rotationDetected = false;
     private long servoStep = 0L;
 
@@ -99,6 +106,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
             private DigitalOutput statusLed;
             private PwmOutput leftServo, rightServo;
+            private DigitalInput frontLeftTouch, frontRightTouch, frontTopTouch, frontBottomTouch, sideLeftTouch, sideRightTouch;
 
             @Override
             protected void setup() throws ConnectionLostException {
@@ -107,30 +115,37 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                 Log.d(TAG, "setup");
                 showVersionInformation();
 
+                // LED
                 statusLed = ioio_.openDigitalOutput(IOIO.LED_PIN, true);
+                openedPins.add(statusLed);
 
                 // Configuration is already prepared with a set of pins that will be used.
                 IOIO_Pin leftServoDefinition = flowManager.getServo(FlowManager.PinConfiguration.LEFT_SERVO);
                 IOIO_Pin rightServoDefinition = flowManager.getServo(FlowManager.PinConfiguration.RIGHT_SERVO);
 
-                int leftServoPin = leftServoDefinition == null
-                        ? FlowManager.SERVO_LEFT_DEFAULT_PIN
-                        : leftServoDefinition.getPinNumber();
+                int leftServoPin = leftServoDefinition == null ? FlowManager.SERVO_LEFT_DEFAULT_PIN : leftServoDefinition.getPinNumber();
+                int rightServoPin = rightServoDefinition == null ? FlowManager.SERVO_RIGHT_DEFAULT_PIN : rightServoDefinition.getPinNumber();
 
-                int rightServoPin = rightServoDefinition == null
-                        ? FlowManager.SERVO_RIGHT_DEFAULT_PIN
-                        : rightServoDefinition.getPinNumber();
+                // LEFT SERVO
+                leftServo = ioio_.openPwmOutput(leftServoPin, FlowManager.SERVO_DEFAULT_PULSE_WIDTH);
+                openedPins.add(leftServo);
 
-                leftServo = ioio_.openPwmOutput(
-                        leftServoPin,
-                        FlowManager.SERVO_DEFAULT_PULSE_WIDTH);
-                rightServo = ioio_.openPwmOutput(
-                        rightServoPin,
-                        FlowManager.SERVO_DEFAULT_PULSE_WIDTH);
+                // RIGHT SERVO
+                rightServo = ioio_.openPwmOutput(rightServoPin, FlowManager.SERVO_DEFAULT_PULSE_WIDTH);
+                openedPins.add(rightServo);
+
+                IOIO_Pin sideRightDefinition = flowManager.getSensor(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT);
+                int sideRightSensorPin = sideRightDefinition == null ? 18 : sideRightDefinition.getPinNumber();
+
+                // SIDE RIGHT
+                sideRightTouch = ioio_.openDigitalInput(sideRightSensorPin, DigitalInput.Spec.Mode.PULL_UP);
+                openedPins.add(sideRightTouch);
             }
 
             @Override
             public void loop() throws ConnectionLostException, InterruptedException {
+                readHapticSensors();
+
                 if (rotationDetected) {
                     flashLed(statusLed, DEFAULT_SLEEP_IN_MILLIS);
                     runServos(leftServo, rightServo);
@@ -142,9 +157,10 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
             public void disconnected() {
                 EventBus.getDefault().postSticky(new Events.PluggedStateChangedEvent(false));
 
-                statusLed.close();
-                leftServo.close();
-                rightServo.close();
+                // close all open pins before leave!
+                for (Closeable openPin : openedPins) {
+                    openPin.close();
+                }
 
                 Log.d(TAG, "disconnected");
             }
@@ -179,6 +195,12 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
         rightServo.setPulseWidth((float) (Math.cos((double) servoStep)) + 1f);
 
         servoStep++;
+
+        Thread.sleep(DEFAULT_SLEEP_IN_MILLIS);
+    }
+
+    @UiThread
+    public void readHapticSensors() throws ConnectionLostException, InterruptedException {
 
         Thread.sleep(DEFAULT_SLEEP_IN_MILLIS);
     }

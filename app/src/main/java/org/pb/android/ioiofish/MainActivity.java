@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         FlowConfiguration flowConfiguration = new FlowConfiguration.Builder()
                 .addDigitalOutputPin(FlowManager.PinConfiguration.LEFT_SERVO)
                 .addDigitalOutputPin(FlowManager.PinConfiguration.RIGHT_SERVO)
+                .addDigitalInputPin(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT)
                 .getConfiguration();
 
         controlServiceManager.startService(flowConfiguration);

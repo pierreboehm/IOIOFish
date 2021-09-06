@@ -78,6 +78,17 @@ public class FlowManager {
         return null;
     }
 
+    @Nullable
+    public IOIO_Pin getSensor(PinConfiguration pinConfiguration) {
+        for (IOIO_Pin ioioPin : getDigitalInputs()) {
+            if (ioioPin.getPinConfiguration().equals(pinConfiguration)) {
+                return ioioPin;
+            }
+        }
+
+        return null;
+    }
+
     public void updateRotation(float azimuth, float pitch, float roll) {
         this.azimuth = azimuth;
         this.pitch = pitch;
