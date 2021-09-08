@@ -5,7 +5,9 @@ import androidx.annotation.Nullable;
 import org.androidannotations.annotations.EBean;
 import org.pb.android.ioiofish.pin.IOIO_Pin;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class FlowManager {
@@ -46,6 +48,7 @@ public class FlowManager {
 
     private FlowConfiguration flowConfiguration;
     private float azimuth, pitch, roll;
+    private Map<Integer, Boolean> sensorState = new HashMap<>();
 
     public void setup(FlowConfiguration flowConfiguration) {
         this.flowConfiguration = flowConfiguration;
@@ -87,6 +90,32 @@ public class FlowManager {
         }
 
         return null;
+    }
+
+    public void setSensorState(int pinNumber, boolean state) {
+        // NOTE: replace method is available in API level 21, so we need to remove the entry first
+        // before we set it again.
+        if (sensorState.containsKey(pinNumber)) {
+            sensorState.remove(pinNumber);
+        }
+
+        sensorState.put(pinNumber, state);
+    }
+
+    public boolean getSensorState(int pinNumber) {
+        if (sensorState.containsKey(pinNumber)) {
+            return sensorState.get(pinNumber);
+        }
+        return false;
+    }
+
+    public boolean hasContact() {
+        for (Map.Entry<Integer, Boolean> sensor : sensorState.entrySet()) {
+            if (sensor.getValue()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void updateRotation(float azimuth, float pitch, float roll) {
