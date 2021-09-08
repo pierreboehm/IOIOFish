@@ -17,7 +17,9 @@ import org.pb.android.ioiofish.gyroscope.Gyrometer;
 import org.pb.android.ioiofish.pin.IOIO_Pin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ioio.lib.api.Closeable;
 import ioio.lib.api.DigitalInput;
@@ -44,6 +46,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
     public IBinder binder = new LocalBinder();
 
     private List<Closeable> openedPins = new ArrayList<>();
+    private Map<Integer, Closeable> sensors = new HashMap<>();
     private boolean rotationDetected = false;
     private long servoStep = 0L;
 
@@ -140,6 +143,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                 // SIDE RIGHT
                 sideRightTouch = ioio_.openDigitalInput(sideRightSensorPin, DigitalInput.Spec.Mode.PULL_UP);
                 openedPins.add(sideRightTouch);
+                sensors.put(sideRightSensorPin, sideRightTouch);
             }
 
             @Override
@@ -150,6 +154,10 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                     flashLed(statusLed, DEFAULT_SLEEP_IN_MILLIS);
                     runServos(leftServo, rightServo);
                     rotationDetected = false;
+                }
+
+                if (flowManager.hasContact()) {
+                    // TODO: here I need an extra information which sensor (location!) has contact to be able to react on it
                 }
             }
 
@@ -191,6 +199,10 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
     @UiThread
     public void runServos(PwmOutput leftServo, PwmOutput rightServo) throws ConnectionLostException, InterruptedException {
+        // TODO: servos will be used in two cases:
+        //  1) keep balance (depends on current rotation-vector)
+        //  2) react on obstacles (depends on haptic sensor states)
+
         leftServo.setPulseWidth((float) (Math.sin((double) servoStep)) + 1f);
         rightServo.setPulseWidth((float) (Math.cos((double) servoStep)) + 1f);
 
@@ -201,6 +213,11 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
     @UiThread
     public void readHapticSensors() throws ConnectionLostException, InterruptedException {
+
+        for (Map.Entry<Integer, Closeable> sensor : sensors.entrySet()) {
+            boolean value = ((DigitalInput) sensor.getValue()).read();
+            flowManager.setSensorState(sensor.getKey(), value);
+        }
 
         Thread.sleep(DEFAULT_SLEEP_IN_MILLIS);
     }
