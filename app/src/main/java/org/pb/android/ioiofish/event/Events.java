@@ -51,4 +51,16 @@ public class Events {
             return Integer.parseInt(value);
         }
     }
+
+    public static class SignalLevelReceivedEvent {
+        private final int pinNumber;
+
+        public SignalLevelReceivedEvent(int pinNumber) {
+            this.pinNumber = pinNumber;
+        }
+
+        public int getPinNumber() {
+            return pinNumber;
+        }
+    }
 }

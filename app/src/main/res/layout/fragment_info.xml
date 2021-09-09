@@ -35,26 +35,31 @@
         android:layout_margin="20dp">
 
         <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:id="@+id/signal1"
             android:layout_width="10dp"
             android:layout_height="40dp"
             android:background="@color/black" />
 
         <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:id="@+id/signal2"
             android:layout_width="10dp"
             android:layout_height="40dp"
             android:background="@color/black" />
 
         <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:id="@+id/signal3"
             android:layout_width="10dp"
             android:layout_height="40dp"
             android:background="@color/black" />
 
         <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:id="@+id/signal4"
             android:layout_width="10dp"
             android:layout_height="40dp"
             android:background="@color/black" />
 
         <org.pb.android.ioiofish.ui.SignalLevelView_
+            android:id="@+id/signal5"
             android:layout_width="10dp"
             android:layout_height="40dp"
             android:background="@color/black" />

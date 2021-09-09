@@ -216,7 +216,10 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
         for (Map.Entry<Integer, Closeable> sensor : sensors.entrySet()) {
             boolean value = ((DigitalInput) sensor.getValue()).read();
-            flowManager.setSensorState(sensor.getKey(), value);
+            int pinNumber = sensor.getKey();
+            flowManager.setSensorState(pinNumber, value);
+
+            EventBus.getDefault().post(new Events.SignalLevelReceivedEvent(pinNumber));
         }
 
         Thread.sleep(DEFAULT_SLEEP_IN_MILLIS);
