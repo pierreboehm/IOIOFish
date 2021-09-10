@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import org.androidannotations.annotations.EBean;
 import org.pb.android.ioiofish.pin.IOIO_Pin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,16 @@ public class FlowManager {
             this.pinType = pinType;
         }
     }
+
+    private static final List<Integer> LEFT_SIDE_SENSORS = new ArrayList<>(Arrays.asList(
+            PinConfiguration.TOUCH_FRONT_LEFT.pin,
+            PinConfiguration.TOUCH_SIDE_LEFT.pin
+    ));
+
+    private static final List<Integer> RIGHT_SIDE_SENSORS = new ArrayList<>(Arrays.asList(
+            PinConfiguration.TOUCH_FRONT_RIGHT.pin,
+            PinConfiguration.TOUCH_SIDE_RIGHT.pin
+    ));
 
     private FlowConfiguration flowConfiguration;
     private float azimuth, pitch, roll;
@@ -93,13 +105,7 @@ public class FlowManager {
     }
 
     public void setSensorState(int pinNumber, boolean state) {
-        // NOTE: replace method is available in API level 21, so we need to remove the entry first
-        // before we set it again.
-        if (sensorState.containsKey(pinNumber)) {
-            sensorState.remove(pinNumber);
-        }
-
-        sensorState.put(pinNumber, state);
+        sensorState.put(pinNumber, state);  // will be replaced if exists
     }
 
     public boolean getSensorState(int pinNumber) {
@@ -110,8 +116,8 @@ public class FlowManager {
     }
 
     public boolean hasContact() {
-        for (Map.Entry<Integer, Boolean> sensor : sensorState.entrySet()) {
-            if (sensor.getValue()) {
+        for (Boolean sensorState : sensorState.values()) {
+            if (sensorState) {
                 return true;
             }
         }
@@ -122,5 +128,25 @@ public class FlowManager {
         this.azimuth = azimuth;
         this.pitch = pitch;
         this.roll = roll;
+    }
+
+    public List<Integer> getLeftSideSensorsWithContact() {
+        return getSensorsWithContact(LEFT_SIDE_SENSORS);
+    }
+
+    public List<Integer> getRightSideSensorsWithContact() {
+        return getSensorsWithContact(RIGHT_SIDE_SENSORS);
+    }
+
+    private List<Integer> getSensorsWithContact(List<Integer> sideSpecificSensorPinList) {
+        List<Integer> resultList = new ArrayList<>();
+
+        for (Integer sensorPin : sideSpecificSensorPinList) {
+            if (sensorState.get(sensorPin)) {
+                resultList.add(sensorPin);
+            }
+        }
+
+        return resultList;
     }
 }
