@@ -158,6 +158,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
                 if (flowManager.hasContact()) {
                     // TODO: here I need an extra information which sensor (location!) has contact to be able to react on it
+
                 }
             }
 
@@ -217,9 +218,12 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
         for (Map.Entry<Integer, Closeable> sensor : sensors.entrySet()) {
             boolean value = ((DigitalInput) sensor.getValue()).read();
             int pinNumber = sensor.getKey();
+
             flowManager.setSensorState(pinNumber, value);
 
-            EventBus.getDefault().post(new Events.SignalLevelReceivedEvent(pinNumber));
+            if (value) {
+                EventBus.getDefault().post(new Events.SignalLevelReceivedEvent(pinNumber));
+            }
         }
 
         Thread.sleep(DEFAULT_SLEEP_IN_MILLIS);
