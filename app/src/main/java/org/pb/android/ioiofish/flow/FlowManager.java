@@ -19,6 +19,13 @@ public class FlowManager {
     public static final int SERVO_LEFT_DEFAULT_PIN = 10;
     public static final int SERVO_RIGHT_DEFAULT_PIN = 11;
 
+    public static final int SENSOR_FRONT_LEFT_DEFAULT_PIN = 21;
+    public static final int SENSOR_FRONT_RIGHT_DEFAULT_PIN = 20;
+    public static final int SENSOR_FRONT_TOP_DEFAULT_PIN = 19;
+    public static final int SENSOR_FRONT_BOTTOM_DEFAULT_PIN = 22;
+    public static final int SENSOR_SIDE_LEFT_DEFAULT_PIN = 23;
+    public static final int SENSOR_SIDE_RIGHT_DEFAULT_PIN = 18;
+
     public static final int SERVO_POSITION_LEFT = 1000;
     public static final int SERVO_POSITION_CENTER = 1500;
     public static final int SERVO_POSITION_RIGHT = 2000;
@@ -32,12 +39,12 @@ public class FlowManager {
         RIGHT_SERVO(SERVO_RIGHT_DEFAULT_PIN, PinType.DIGITAL_OUT),
         LEFT_EAR(40, PinType.ANALOG_IN),
         RIGHT_EAR(41, PinType.ANALOG_IN),
-        TOUCH_FRONT_LEFT(21, PinType.DIGITAL_IN),
-        TOUCH_FRONT_RIGHT(20, PinType.DIGITAL_IN),
-        TOUCH_FRONT_TOP(19, PinType.DIGITAL_IN),
-        TOUCH_FRONT_BOTTOM(22, PinType.DIGITAL_IN),
-        TOUCH_SIDE_LEFT(23, PinType.DIGITAL_IN),
-        TOUCH_SIDE_RIGHT(18, PinType.DIGITAL_IN);
+        TOUCH_FRONT_LEFT(SENSOR_FRONT_LEFT_DEFAULT_PIN, PinType.DIGITAL_IN),
+        TOUCH_FRONT_RIGHT(SENSOR_FRONT_RIGHT_DEFAULT_PIN, PinType.DIGITAL_IN),
+        TOUCH_FRONT_TOP(SENSOR_FRONT_TOP_DEFAULT_PIN, PinType.DIGITAL_IN),
+        TOUCH_FRONT_BOTTOM(SENSOR_FRONT_BOTTOM_DEFAULT_PIN, PinType.DIGITAL_IN),
+        TOUCH_SIDE_LEFT(SENSOR_SIDE_LEFT_DEFAULT_PIN, PinType.DIGITAL_IN),
+        TOUCH_SIDE_RIGHT(SENSOR_SIDE_RIGHT_DEFAULT_PIN, PinType.DIGITAL_IN);
 
         public final int pin;
         private final PinType pinType;
