@@ -34,41 +34,100 @@
         android:layout_alignParentStart="true"
         android:layout_margin="20dp">
 
-        <org.pb.android.ioiofish.ui.SignalLevelView_
-            android:id="@+id/signal1"
-            android:layout_width="10dp"
-            android:layout_height="40dp"
-            android:background="@color/black" />
+        <LinearLayout
+            android:id="@+id/layoutLeftSideSensors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <org.pb.android.ioiofish.ui.SignalLevelView_
-            android:id="@+id/signal2"
-            android:layout_width="10dp"
-            android:layout_height="40dp"
-            android:background="@color/black" />
+            <View
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:layout_margin="2dp" />
 
-        <org.pb.android.ioiofish.ui.SignalLevelView_
-            android:id="@+id/signal3"
-            android:layout_width="10dp"
-            android:layout_height="40dp"
-            android:background="@color/black" />
+            <org.pb.android.ioiofish.ui.SignalLevelView_
+                android:id="@+id/signal1"
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:background="@color/black"
+                android:layout_margin="2dp" />
 
-        <org.pb.android.ioiofish.ui.SignalLevelView_
-            android:id="@+id/signal4"
-            android:layout_width="10dp"
-            android:layout_height="40dp"
-            android:background="@color/black" />
+            <View
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:layout_margin="2dp" />
 
-        <org.pb.android.ioiofish.ui.SignalLevelView_
-            android:id="@+id/signal5"
-            android:layout_width="10dp"
-            android:layout_height="40dp"
-            android:background="@color/black" />
+            <org.pb.android.ioiofish.ui.SignalLevelView_
+                android:id="@+id/signal2"
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:background="@color/black"
+                android:layout_margin="2dp" />
 
-        <org.pb.android.ioiofish.ui.SignalLevelView_
-            android:id="@+id/signal6"
-            android:layout_width="10dp"
-            android:layout_height="40dp"
-            android:background="@color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutCenterSensors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <org.pb.android.ioiofish.ui.SignalLevelView_
+                android:id="@+id/signal3"
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:background="@color/black"
+                android:layout_margin="2dp" />
+
+            <View
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:layout_margin="2dp" />
+
+            <org.pb.android.ioiofish.ui.SignalLevelView_
+                android:id="@+id/signal4"
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:background="@color/black"
+                android:layout_margin="2dp" />
+
+            <View
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:layout_margin="2dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutRightSideSensors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:layout_margin="2dp" />
+
+            <org.pb.android.ioiofish.ui.SignalLevelView_
+                android:id="@+id/signal5"
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:background="@color/black"
+                android:layout_margin="2dp" />
+
+            <View
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:layout_margin="2dp" />
+
+            <org.pb.android.ioiofish.ui.SignalLevelView_
+                android:id="@+id/signal6"
+                android:layout_width="@dimen/signalLevelViewWidth"
+                android:layout_height="@dimen/signalLevelViewHeight"
+                android:background="@color/black"
+                android:layout_margin="2dp" />
+        </LinearLayout>
 
     </LinearLayout>
 

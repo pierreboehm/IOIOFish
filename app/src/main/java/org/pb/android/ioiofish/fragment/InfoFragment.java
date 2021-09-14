@@ -50,10 +50,10 @@ public class InfoFragment extends Fragment {
     private final Map<Integer, SignalLevelView> signalLevelViewMap = new HashMap<Integer, SignalLevelView>() {
         {
             put(FlowManager.PinConfiguration.TOUCH_FRONT_LEFT.pin, signalLevelView1);
-            put(FlowManager.PinConfiguration.TOUCH_FRONT_RIGHT.pin, signalLevelView2);
+            put(FlowManager.PinConfiguration.TOUCH_FRONT_RIGHT.pin, signalLevelView5);
             put(FlowManager.PinConfiguration.TOUCH_FRONT_TOP.pin, signalLevelView3);
             put(FlowManager.PinConfiguration.TOUCH_FRONT_BOTTOM.pin, signalLevelView4);
-            put(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT.pin, signalLevelView5);
+            put(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT.pin, signalLevelView2);
             put(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT.pin, signalLevelView6);
         }
     };
