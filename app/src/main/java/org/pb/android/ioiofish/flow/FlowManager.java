@@ -112,7 +112,7 @@ public class FlowManager {
     }
 
     public void setSensorState(int pinNumber, boolean state) {
-        sensorState.put(pinNumber, state);  // will be replaced if exists
+        sensorState.put(pinNumber, state);  // is replaced if exists
     }
 
     public boolean getSensorState(int pinNumber) {
@@ -123,8 +123,8 @@ public class FlowManager {
     }
 
     public boolean hasContact() {
-        for (Boolean sensorState : sensorState.values()) {
-            if (sensorState) {
+        for (Boolean sensorStateValue : sensorState.values()) {
+            if (sensorStateValue) {
                 return true;
             }
         }
@@ -145,11 +145,13 @@ public class FlowManager {
         return getSensorsWithContact(RIGHT_SIDE_SENSORS);
     }
 
-    private List<Integer> getSensorsWithContact(List<Integer> sideSpecificSensorPinList) {
+    private List<Integer> getSensorsWithContact(final List<Integer> sideSpecificSensorPinList) {
         List<Integer> resultList = new ArrayList<>();
 
         for (Integer sensorPin : sideSpecificSensorPinList) {
-            if (sensorState.get(sensorPin)) {
+            Boolean sensorStateValue = sensorState.get(sensorPin);
+
+            if (sensorStateValue != null && sensorStateValue) {
                 resultList.add(sensorPin);
             }
         }
