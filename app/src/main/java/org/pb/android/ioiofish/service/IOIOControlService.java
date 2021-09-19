@@ -169,13 +169,18 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
             }
 
             private void setupStatusLed() throws ConnectionLostException {
-                statusLed = ioio_.openDigitalOutput(IOIO.LED_PIN, true);
+                statusLed = ioio_.openDigitalOutput(IOIO.LED_PIN, true);    // Note: true means OFF (wtf!)
                 openedPins.add(statusLed);
             }
 
             private void setupServos() throws ConnectionLostException {
                 leftServo = setupServo(FlowManager.PinConfiguration.LEFT_SERVO, FlowManager.SERVO_LEFT_DEFAULT_PIN);
                 rightServo = setupServo(FlowManager.PinConfiguration.RIGHT_SERVO, FlowManager.SERVO_RIGHT_DEFAULT_PIN);
+            }
+
+            private void setupSensors() throws ConnectionLostException {
+                sideLeftTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT, FlowManager.SENSOR_SIDE_LEFT_DEFAULT_PIN);
+                sideRightTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT, FlowManager.SENSOR_SIDE_RIGHT_DEFAULT_PIN);
             }
 
             private PwmOutput setupServo(FlowManager.PinConfiguration pinConfiguration, int defaultPin) throws ConnectionLostException {
@@ -188,16 +193,11 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                 return pwmOutput;
             }
 
-            private void setupSensors() throws ConnectionLostException {
-                sideLeftTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT, FlowManager.SENSOR_SIDE_LEFT_DEFAULT_PIN);
-                sideRightTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT, FlowManager.SENSOR_SIDE_RIGHT_DEFAULT_PIN);
-            }
-
             private DigitalInput setupSensor(FlowManager.PinConfiguration pinConfiguration, int defaultPin) throws ConnectionLostException {
                 IOIO_Pin pinDefinition = flowManager.getSensor(pinConfiguration);
                 int sideLeftSensorPin = pinDefinition == null ? defaultPin : pinDefinition.getPinNumber();
 
-                DigitalInput digitalInput = ioio_.openDigitalInput(sideLeftSensorPin, DigitalInput.Spec.Mode.PULL_UP);    // must be public to be able to close it dynamically
+                DigitalInput digitalInput = ioio_.openDigitalInput(sideLeftSensorPin, DigitalInput.Spec.Mode.PULL_UP);
                 openedPins.add(digitalInput);
                 sensors.put(sideLeftSensorPin, digitalInput);
 
@@ -208,9 +208,9 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
     @UiThread
     public void flashLed(DigitalOutput led, int waitInMillis) throws ConnectionLostException, InterruptedException {
-        led.write(false);
+        led.write(false);   // ON
         Thread.sleep(waitInMillis);
-        led.write(true);
+        led.write(true);    // OFF
     }
 
     @UiThread
