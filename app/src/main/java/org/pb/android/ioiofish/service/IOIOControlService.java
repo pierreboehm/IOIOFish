@@ -179,6 +179,12 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
             }
 
             private void setupSensors() throws ConnectionLostException {
+                frontTopTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_TOP, FlowManager.SENSOR_FRONT_TOP_DEFAULT_PIN);
+                frontBottomTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_BOTTOM, FlowManager.SENSOR_FRONT_BOTTOM_DEFAULT_PIN);
+
+                frontLeftTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_LEFT, FlowManager.SENSOR_FRONT_LEFT_DEFAULT_PIN);
+                frontRightTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_RIGHT, FlowManager.SENSOR_FRONT_RIGHT_DEFAULT_PIN);
+
                 sideLeftTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT, FlowManager.SENSOR_SIDE_LEFT_DEFAULT_PIN);
                 sideRightTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT, FlowManager.SENSOR_SIDE_RIGHT_DEFAULT_PIN);
             }
