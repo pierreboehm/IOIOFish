@@ -59,8 +59,12 @@ public class SignalLevelView extends View {
 
     @UiThread
     public void setSignal() {
-        hasSignal = true;
+        if (hasSignal) {
+            return;
+        }
+
         signalLevel = 10f;
+        hasSignal = true;
         invalidate();
     }
 
