@@ -118,44 +118,10 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                 Log.d(TAG, "setup");
                 showVersionInformation();
 
-                // LED
-                statusLed = ioio_.openDigitalOutput(IOIO.LED_PIN, true);
-                openedPins.add(statusLed);
-
-                // --- SERVOS ---
-
-                // Configuration is already prepared with a set of pins that will be used.
-                IOIO_Pin leftServoDefinition = flowManager.getServo(FlowManager.PinConfiguration.LEFT_SERVO);
-                IOIO_Pin rightServoDefinition = flowManager.getServo(FlowManager.PinConfiguration.RIGHT_SERVO);
-
-                int leftServoPin = leftServoDefinition == null ? FlowManager.SERVO_LEFT_DEFAULT_PIN : leftServoDefinition.getPinNumber();
-                int rightServoPin = rightServoDefinition == null ? FlowManager.SERVO_RIGHT_DEFAULT_PIN : rightServoDefinition.getPinNumber();
-
-                // LEFT SERVO
-                leftServo = ioio_.openPwmOutput(leftServoPin, FlowManager.SERVO_DEFAULT_PULSE_WIDTH);
-                openedPins.add(leftServo);
-
-                // RIGHT SERVO
-                rightServo = ioio_.openPwmOutput(rightServoPin, FlowManager.SERVO_DEFAULT_PULSE_WIDTH);
-                openedPins.add(rightServo);
-
-                // --- SENSORS ---
-
-                IOIO_Pin sideLeftDefinition = flowManager.getSensor(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT);
-                int sideLeftSensorPin = sideLeftDefinition == null ? FlowManager.SENSOR_SIDE_LEFT_DEFAULT_PIN : sideLeftDefinition.getPinNumber();
-
-                // SIDE LEFT
-                sideLeftTouch = ioio_.openDigitalInput(sideLeftSensorPin, DigitalInput.Spec.Mode.PULL_UP);    // must be public to be able to close it dynamically
-                openedPins.add(sideLeftTouch);
-                sensors.put(sideLeftSensorPin, sideLeftTouch);
-
-                IOIO_Pin sideRightDefinition = flowManager.getSensor(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT);
-                int sideRightSensorPin = sideRightDefinition == null ? FlowManager.SENSOR_SIDE_RIGHT_DEFAULT_PIN : sideRightDefinition.getPinNumber();
-
-                // SIDE RIGHT
-                sideRightTouch = ioio_.openDigitalInput(sideRightSensorPin, DigitalInput.Spec.Mode.PULL_UP);    // must be public to be able to close it dynamically
-                openedPins.add(sideRightTouch);
-                sensors.put(sideRightSensorPin, sideRightTouch);
+                // --- SETUP HARDWARE ---
+                setupStatusLed();
+                setupServos();
+                setupSensors();
             }
 
             @Override
@@ -170,8 +136,8 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
                 if (flowManager.hasContact()) {
                     // TODO: here I need an extra information which sensor (location!) has contact to be able to react on it
-                    List<Integer> leftSideSensors = flowManager.getLeftSideSensorsWithContact();
-                    List<Integer> rightSideSensors = flowManager.getRightSideSensorsWithContact();
+                    //List<Integer> leftSideSensors = flowManager.getLeftSideSensorsWithContact();
+                    //List<Integer> rightSideSensors = flowManager.getRightSideSensorsWithContact();
                 }
             }
 
@@ -201,6 +167,42 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
                 Log.d(TAG, versionInformation);
             }
+
+            private void setupStatusLed() throws ConnectionLostException {
+                statusLed = ioio_.openDigitalOutput(IOIO.LED_PIN, true);
+                openedPins.add(statusLed);
+            }
+
+            private void setupServos() throws ConnectionLostException {
+                leftServo = setupServo(FlowManager.PinConfiguration.LEFT_SERVO, FlowManager.SERVO_LEFT_DEFAULT_PIN);
+                rightServo = setupServo(FlowManager.PinConfiguration.RIGHT_SERVO, FlowManager.SERVO_RIGHT_DEFAULT_PIN);
+            }
+
+            private PwmOutput setupServo(FlowManager.PinConfiguration pinConfiguration, int defaultPin) throws ConnectionLostException {
+                IOIO_Pin pinDefinition = flowManager.getServo(pinConfiguration);
+                int servoPin = pinDefinition == null ? defaultPin : pinDefinition.getPinNumber();
+
+                PwmOutput pwmOutput = ioio_.openPwmOutput(servoPin, FlowManager.SERVO_DEFAULT_PULSE_WIDTH);
+                openedPins.add(pwmOutput);
+
+                return pwmOutput;
+            }
+
+            private void setupSensors() throws ConnectionLostException {
+                sideLeftTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT, FlowManager.SENSOR_SIDE_LEFT_DEFAULT_PIN);
+                sideRightTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT, FlowManager.SENSOR_SIDE_RIGHT_DEFAULT_PIN);
+            }
+
+            private DigitalInput setupSensor(FlowManager.PinConfiguration pinConfiguration, int defaultPin) throws ConnectionLostException {
+                IOIO_Pin pinDefinition = flowManager.getSensor(pinConfiguration);
+                int sideLeftSensorPin = pinDefinition == null ? defaultPin : pinDefinition.getPinNumber();
+
+                DigitalInput digitalInput = ioio_.openDigitalInput(sideLeftSensorPin, DigitalInput.Spec.Mode.PULL_UP);    // must be public to be able to close it dynamically
+                openedPins.add(digitalInput);
+                sensors.put(sideLeftSensorPin, digitalInput);
+
+                return digitalInput;
+            }
         };
     }
 
@@ -229,7 +231,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
     public void readHapticSensors() throws ConnectionLostException, InterruptedException {
 
         for (Map.Entry<Integer, Closeable> sensor : sensors.entrySet()) {
-            boolean value = ((DigitalInput) sensor.getValue()).read();
+            boolean value = !((DigitalInput) sensor.getValue()).read();
             int pinNumber = sensor.getKey();
 
             flowManager.setSensorState(pinNumber, value);
