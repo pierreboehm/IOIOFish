@@ -1,9 +1,13 @@
 package org.pb.android.ioiofish.fragment;
 
+import android.content.pm.PackageManager;
+import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
@@ -47,16 +51,21 @@ public class InfoFragment extends Fragment {
     @ViewById(R.id.signal6)
     SignalLevelView signalLevelView6;
 
-    private final Map<Integer, SignalLevelView> signalLevelViewMap = new HashMap<Integer, SignalLevelView>() {
-        {
-            put(FlowManager.PinConfiguration.TOUCH_FRONT_LEFT.pin, signalLevelView1);
-            put(FlowManager.PinConfiguration.TOUCH_FRONT_RIGHT.pin, signalLevelView5);
-            put(FlowManager.PinConfiguration.TOUCH_FRONT_TOP.pin, signalLevelView3);
-            put(FlowManager.PinConfiguration.TOUCH_FRONT_BOTTOM.pin, signalLevelView4);
-            put(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT.pin, signalLevelView2);
-            put(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT.pin, signalLevelView6);
+    private Map<Integer, SignalLevelView> signalLevelViewMap = new HashMap<>();
+
+    @AfterViews
+    public void initViews() {
+        PackageManager packageManager = requireContext().getPackageManager();
+        boolean hasAccessorySupport = packageManager.hasSystemFeature(PackageManager.FEATURE_USB_ACCESSORY);
+
+        Log.v(TAG, "usb accessory support: " + hasAccessorySupport);
+
+        if (!hasAccessorySupport) {
+            Toast.makeText(getContext(), "This device does not support usb accessories.", Toast.LENGTH_LONG).show();
         }
-    };
+
+        setupSignalLevelViewMap();
+    }
 
     @Override
     public void onResume() {
@@ -92,5 +101,14 @@ public class InfoFragment extends Fragment {
         if (signalLevelView != null) {
             signalLevelView.setSignal();
         }
+    }
+
+    private void setupSignalLevelViewMap() {
+        signalLevelViewMap.put(FlowManager.PinConfiguration.TOUCH_FRONT_LEFT.pin, signalLevelView1);
+        signalLevelViewMap.put(FlowManager.PinConfiguration.TOUCH_FRONT_RIGHT.pin, signalLevelView5);
+        signalLevelViewMap.put(FlowManager.PinConfiguration.TOUCH_FRONT_TOP.pin, signalLevelView3);
+        signalLevelViewMap.put(FlowManager.PinConfiguration.TOUCH_FRONT_BOTTOM.pin, signalLevelView4);
+        signalLevelViewMap.put(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT.pin, signalLevelView2);
+        signalLevelViewMap.put(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT.pin, signalLevelView6);
     }
 }
