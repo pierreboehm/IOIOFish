@@ -100,6 +100,10 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
         stopSelf();
     }
 
+    public boolean isRunning() {
+        return gyrometer.hasListener();     // FIXME
+    }
+
     // --- IOIO-board related code
     // TODO: find a way to implement it in an separate file (IOIOLooperWrapper does not work :|)
 
@@ -109,7 +113,6 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
             private DigitalOutput statusLed;
             private PwmOutput leftServo, rightServo;
-            private DigitalInput frontLeftTouch, frontRightTouch, frontTopTouch, frontBottomTouch, sideLeftTouch, sideRightTouch;
 
             @Override
             protected void setup() throws ConnectionLostException {
@@ -126,7 +129,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
             @Override
             public void loop() throws ConnectionLostException, InterruptedException {
-                readHapticSensors();
+                readSensorContact();
 
                 if (rotationDetected) {
                     flashLed(statusLed, DEFAULT_SLEEP_IN_MILLIS);
@@ -135,9 +138,8 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                 }
 
                 if (flowManager.hasContact()) {
-                    // TODO: here I need an extra information which sensor (location!) has contact to be able to react on it
-                    //List<Integer> leftSideSensors = flowManager.getLeftSideSensorsWithContact();
-                    //List<Integer> rightSideSensors = flowManager.getRightSideSensorsWithContact();
+                    handleSensorContact();
+                    //runServos(leftServo, rightServo);
                 }
             }
 
@@ -179,14 +181,14 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
             }
 
             private void setupSensors() throws ConnectionLostException {
-                frontTopTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_TOP, FlowManager.SENSOR_FRONT_TOP_DEFAULT_PIN);
-                frontBottomTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_BOTTOM, FlowManager.SENSOR_FRONT_BOTTOM_DEFAULT_PIN);
+                setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_TOP, FlowManager.SENSOR_FRONT_TOP_DEFAULT_PIN);
+                setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_BOTTOM, FlowManager.SENSOR_FRONT_BOTTOM_DEFAULT_PIN);
 
-                frontLeftTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_LEFT, FlowManager.SENSOR_FRONT_LEFT_DEFAULT_PIN);
-                frontRightTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_RIGHT, FlowManager.SENSOR_FRONT_RIGHT_DEFAULT_PIN);
+                setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_LEFT, FlowManager.SENSOR_FRONT_LEFT_DEFAULT_PIN);
+                setupSensor(FlowManager.PinConfiguration.TOUCH_FRONT_RIGHT, FlowManager.SENSOR_FRONT_RIGHT_DEFAULT_PIN);
 
-                sideLeftTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT, FlowManager.SENSOR_SIDE_LEFT_DEFAULT_PIN);
-                sideRightTouch = setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT, FlowManager.SENSOR_SIDE_RIGHT_DEFAULT_PIN);
+                setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_LEFT, FlowManager.SENSOR_SIDE_LEFT_DEFAULT_PIN);
+                setupSensor(FlowManager.PinConfiguration.TOUCH_SIDE_RIGHT, FlowManager.SENSOR_SIDE_RIGHT_DEFAULT_PIN);
             }
 
             private PwmOutput setupServo(FlowManager.PinConfiguration pinConfiguration, int defaultPin) throws ConnectionLostException {
@@ -199,15 +201,13 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                 return pwmOutput;
             }
 
-            private DigitalInput setupSensor(FlowManager.PinConfiguration pinConfiguration, int defaultPin) throws ConnectionLostException {
+            private void setupSensor(FlowManager.PinConfiguration pinConfiguration, int defaultPin) throws ConnectionLostException {
                 IOIO_Pin pinDefinition = flowManager.getSensor(pinConfiguration);
                 int sideLeftSensorPin = pinDefinition == null ? defaultPin : pinDefinition.getPinNumber();
 
                 DigitalInput digitalInput = ioio_.openDigitalInput(sideLeftSensorPin, DigitalInput.Spec.Mode.PULL_UP);
                 openedPins.add(digitalInput);
                 sensors.put(sideLeftSensorPin, digitalInput);
-
-                return digitalInput;
             }
         };
     }
@@ -234,7 +234,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
     }
 
     @UiThread
-    public void readHapticSensors() throws ConnectionLostException, InterruptedException {
+    public void readSensorContact() throws ConnectionLostException, InterruptedException {
 
         for (Map.Entry<Integer, Closeable> sensor : sensors.entrySet()) {
             boolean value = !((DigitalInput) sensor.getValue()).read();
@@ -246,6 +246,15 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                 EventBus.getDefault().post(new Events.SignalLevelReceivedEvent(pinNumber));
             }
         }
+
+        Thread.sleep(DEFAULT_SLEEP_IN_MILLIS);
+    }
+
+    @UiThread
+    public void handleSensorContact() throws ConnectionLostException, InterruptedException {
+        // TODO: here I need an extra information which sensor (location!) has contact to be able to react on it
+        List<Integer> leftSideSensors = flowManager.getLeftSideSensorsWithContact();
+        List<Integer> rightSideSensors = flowManager.getRightSideSensorsWithContact();
 
         Thread.sleep(DEFAULT_SLEEP_IN_MILLIS);
     }
