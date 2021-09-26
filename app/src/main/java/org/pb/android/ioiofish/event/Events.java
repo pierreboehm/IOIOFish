@@ -63,4 +63,20 @@ public class Events {
             return pinNumber;
         }
     }
+
+    public static class ServiceControlEvent {
+        public enum ServiceState {
+            START, STOP
+        }
+
+        private final ServiceState serviceState;
+
+        public ServiceControlEvent(ServiceState serviceState) {
+            this.serviceState = serviceState;
+        }
+
+        public ServiceState getServiceState() {
+            return serviceState;
+        }
+    }
 }
