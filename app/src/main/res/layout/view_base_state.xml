@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <ImageView
+        android:id="@+id/ivOval"
+        android:layout_width="19dp"
+        android:layout_height="19dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/iv_oval_teal_200_quarter" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivLine"
+        android:layout_width="3dp"
+        android:layout_height="71dp"
+        android:background="@drawable/connection_state_line_animation" />
+
+    <ImageView
+        android:id="@+id/ivHexagon"
+        android:layout_width="90dp"
+        android:layout_height="78dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/iv_hexagon_teal_200_quarter" />
+
+</LinearLayout>
