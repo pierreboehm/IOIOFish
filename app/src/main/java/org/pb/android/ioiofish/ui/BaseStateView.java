@@ -85,33 +85,17 @@ public class BaseStateView extends LinearLayout {
         }
     }
 
+    // FIXME?: not very elegant, but works so far ...
     private void setPitchLevelState(float pitchLevel) {
+        int pitchLevelImageResourceLeft = pitchLevel < 0f
+                ? animationManager.getPitchLevelStateImageResource(pitchLevel)
+                : R.drawable.ani_stripes_0;
 
-        ivStripesRight.setImageResource(R.drawable.ani_stripes_0);
-        ivStripesLeft.setImageResource(R.drawable.ani_stripes_0);
+        int pitchLevelImageResourceRight = pitchLevel > 0f
+                ? animationManager.getPitchLevelStateImageResource(pitchLevel)
+                : R.drawable.ani_stripes_0;
 
-        if (pitchLevel < -5f && pitchLevel >= -10f) {
-            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l1);
-        } else if (pitchLevel < -10f && pitchLevel >= -20f) {
-            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l2);
-        } else if (pitchLevel < -20f && pitchLevel >= -30f) {
-            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l3);
-        } else if (pitchLevel < -30f && pitchLevel >= -40f) {
-            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l4);
-        } else if (pitchLevel < -40f) {
-            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l5);
-        }
-
-        if (pitchLevel > 5f && pitchLevel <= 10f) {
-            ivStripesRight.setImageResource(R.drawable.ani_stripes_r1);
-        } else if (pitchLevel > 10f && pitchLevel <= 20f) {
-            ivStripesRight.setImageResource(R.drawable.ani_stripes_r2);
-        } else if (pitchLevel > 20f && pitchLevel <= 30f) {
-            ivStripesRight.setImageResource(R.drawable.ani_stripes_r3);
-        } else if (pitchLevel > 30f && pitchLevel <= 40f) {
-            ivStripesRight.setImageResource(R.drawable.ani_stripes_r4);
-        } else if (pitchLevel > 40f) {
-            ivStripesRight.setImageResource(R.drawable.ani_stripes_r5);
-        }
+        ivStripesRight.setImageResource(pitchLevelImageResourceRight);
+        ivStripesLeft.setImageResource(pitchLevelImageResourceLeft);
     }
 }

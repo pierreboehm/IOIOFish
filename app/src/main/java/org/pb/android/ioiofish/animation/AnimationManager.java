@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.widget.ImageView;
 
 import org.androidannotations.annotations.EBean;
+import org.pb.android.ioiofish.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,36 @@ public class AnimationManager {
                 animationConfiguration.getResourceIds(),
                 animationConfiguration.getDuration(),
                 imageView);
+    }
+
+    public int getPitchLevelStateImageResource(float pitchLevel) {
+        if (pitchLevel < 0f) {
+            if (pitchLevel < -5f && pitchLevel >= -10f) {
+                return R.drawable.ani_stripes_l1;
+            } else if (pitchLevel < -10f && pitchLevel >= -20f) {
+                return R.drawable.ani_stripes_l2;
+            } else if (pitchLevel < -20f && pitchLevel >= -30f) {
+                return R.drawable.ani_stripes_l3;
+            } else if (pitchLevel < -30f && pitchLevel >= -40f) {
+                return R.drawable.ani_stripes_l4;
+            } else if (pitchLevel < -40f) {
+                return R.drawable.ani_stripes_l5;
+            }
+        } else if (pitchLevel > 0f) {
+            if (pitchLevel > 5f && pitchLevel <= 10f) {
+                return R.drawable.ani_stripes_r1;
+            } else if (pitchLevel > 10f && pitchLevel <= 20f) {
+                return R.drawable.ani_stripes_r2;
+            } else if (pitchLevel > 20f && pitchLevel <= 30f) {
+                return R.drawable.ani_stripes_r3;
+            } else if (pitchLevel > 30f && pitchLevel <= 40f) {
+                return R.drawable.ani_stripes_r4;
+            } else if (pitchLevel > 40f) {
+                return R.drawable.ani_stripes_r5;
+            }
+        }
+
+        return R.drawable.ani_stripes_0;
     }
 
     private void startAnimation(int startValue, int endValue, int[] resourceIds, int duration, ImageView imageView) {
