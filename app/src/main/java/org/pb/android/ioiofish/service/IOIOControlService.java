@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import ioio.lib.api.Closeable;
 import ioio.lib.api.DigitalInput;
@@ -147,9 +148,13 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
             public void disconnected() {
                 EventBus.getDefault().postSticky(new Events.PluggedStateChangedEvent(false));
 
-                // close all open pins before leave!
-                for (Closeable openPin : openedPins) {
-                    openPin.close();
+                try {
+                    // close all open pins before leave!
+                    for (Closeable openPin : openedPins) {
+                        openPin.close();
+                    }
+                } catch (IllegalStateException illegalStateException) {
+                    Log.w(TAG, Objects.requireNonNull(illegalStateException.getLocalizedMessage()));
                 }
 
                 Log.d(TAG, "disconnected");
