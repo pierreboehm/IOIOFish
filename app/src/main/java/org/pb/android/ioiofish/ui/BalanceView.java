@@ -53,8 +53,8 @@ public class BalanceView extends View {
         float yCenter = (float) canvas.getHeight() / 2f;
         float y = (yCenter * currentValue) / 90f;
 
-        // rotate away, values become positive (top level)
-        // rotate towards, values become negative (bottom level)
+        // rotate away, values become positive (top level - right)
+        // rotate towards, values become negative (bottom level - left)
 
         if (y > 0f) {
             for (float yPos = yCenter - 4f; yPos > yCenter - y; yPos -= 8f) {
