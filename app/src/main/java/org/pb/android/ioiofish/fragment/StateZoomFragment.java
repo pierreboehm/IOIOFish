@@ -26,9 +26,9 @@ public class StateZoomFragment extends Fragment {
 
     @AfterViews
     public void initViews() {
-        baseStateView.setConnected();
         //baseStateView.setConnecting();
         EventBus.getDefault().postSticky(new Events.ServiceControlEvent(Events.ServiceControlEvent.ServiceState.START));
+        baseStateView.setConnected();
     }
 
     @Override

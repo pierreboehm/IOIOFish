@@ -61,14 +61,14 @@ public class BaseStateView extends LinearLayout {
         ivOval.setImageResource(R.drawable.iv_oval_teal_200_full);
         ivLine.setImageResource(R.drawable.iv_line_dot_teal_200_full);
         ivHexagon.setImageResource(R.drawable.iv_hexagon_teal_200_full);
-        ivLine2.setImageResource(R.drawable.iv_line_teal_200_full);
+        ivLine2.setImageResource(R.drawable.iv_line2_teal_200_full);
     }
 
     public void setDisconnected() {
         ivOval.setImageResource(R.drawable.iv_oval_teal_200_quarter);
         ivLine.setImageResource(R.drawable.iv_line_dot_teal_200_quarter);
         ivHexagon.setImageResource(R.drawable.iv_hexagon_teal_200_quarter);
-        ivLine2.setImageResource(R.drawable.iv_line_teal_200_quarter);
+        ivLine2.setImageResource(R.drawable.iv_line2_teal_200_quarter);
     }
 
     public void receiveSensorSignal() {
@@ -76,10 +76,42 @@ public class BaseStateView extends LinearLayout {
     }
 
     public void receiveGyroSignal(float pitchLevel) {
+        setPitchLevelState(pitchLevel);
+
         if (pitchLevel >= 0f) {
             animationManager.startAnimation(ivLine2, AnimationConfiguration.GYRO_DATA_INCOMING_RIGHT);
         } else {
             animationManager.startAnimation(ivLine2, AnimationConfiguration.GYRO_DATA_INCOMING_LEFT);
+        }
+    }
+
+    private void setPitchLevelState(float pitchLevel) {
+
+        ivStripesRight.setImageResource(R.drawable.ani_stripes_0);
+        ivStripesLeft.setImageResource(R.drawable.ani_stripes_0);
+
+        if (pitchLevel < -5f && pitchLevel >= -10f) {
+            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l1);
+        } else if (pitchLevel < -10f && pitchLevel >= -20f) {
+            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l2);
+        } else if (pitchLevel < -20f && pitchLevel >= -30f) {
+            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l3);
+        } else if (pitchLevel < -30f && pitchLevel >= -40f) {
+            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l4);
+        } else if (pitchLevel < -40f) {
+            ivStripesLeft.setImageResource(R.drawable.ani_stripes_l5);
+        }
+
+        if (pitchLevel > 5f && pitchLevel <= 10f) {
+            ivStripesRight.setImageResource(R.drawable.ani_stripes_r1);
+        } else if (pitchLevel > 10f && pitchLevel <= 20f) {
+            ivStripesRight.setImageResource(R.drawable.ani_stripes_r2);
+        } else if (pitchLevel > 20f && pitchLevel <= 30f) {
+            ivStripesRight.setImageResource(R.drawable.ani_stripes_r3);
+        } else if (pitchLevel > 30f && pitchLevel <= 40f) {
+            ivStripesRight.setImageResource(R.drawable.ani_stripes_r4);
+        } else if (pitchLevel > 40f) {
+            ivStripesRight.setImageResource(R.drawable.ani_stripes_r5);
         }
     }
 }
