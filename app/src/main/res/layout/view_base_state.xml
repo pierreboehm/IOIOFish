@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -9,20 +10,61 @@
         android:id="@+id/ivOval"
         android:layout_width="19dp"
         android:layout_height="19dp"
+        android:layerType="hardware"
         android:scaleType="fitXY"
         android:src="@drawable/iv_oval_teal_200_quarter" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/ivLine"
         android:layout_width="3dp"
-        android:layout_height="71dp"
-        android:background="@drawable/connection_state_line_animation" />
+        android:layout_height="56dp"
+        android:layerType="hardware"
+        android:scaleType="fitXY"
+        android:src="@drawable/iv_line_dot_teal_200_quarter" />
 
     <ImageView
         android:id="@+id/ivHexagon"
         android:layout_width="90dp"
         android:layout_height="78dp"
+        android:layerType="hardware"
         android:scaleType="fitXY"
         android:src="@drawable/iv_hexagon_teal_200_quarter" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="84dp">
+
+        <ImageView
+            android:id="@+id/ivLine2"
+            android:layout_width="38dp"
+            android:layout_height="83dp"
+            android:layout_centerHorizontal="true"
+            android:layerType="hardware"
+            android:scaleType="fitXY"
+            android:src="@drawable/iv_line2_teal_200_quarter" />
+
+        <ImageView
+            android:id="@+id/ivStripesLeft"
+            android:layout_width="26dp"
+            android:layout_height="45dp"
+            android:layout_alignParentBottom="true"
+            tools:ignore="RtlHardcoded"
+            android:layout_alignParentLeft="true"
+            android:layerType="hardware"
+            android:scaleType="fitXY"
+            android:src="@drawable/iv_stripes_teal_200_quarter" />
+
+        <ImageView
+            android:id="@+id/ivStripesRight"
+            android:layout_width="26dp"
+            android:layout_height="45dp"
+            android:layout_alignParentBottom="true"
+            tools:ignore="RtlHardcoded"
+            android:layout_alignParentRight="true"
+            android:layerType="hardware"
+            android:scaleType="fitXY"
+            android:src="@drawable/iv_stripes_teal_200_quarter" />
+
+    </RelativeLayout>
 
 </LinearLayout>
