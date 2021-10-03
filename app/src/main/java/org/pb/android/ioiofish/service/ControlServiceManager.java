@@ -39,6 +39,9 @@ public class ControlServiceManager {
     }
 
     public boolean serviceRunning() {
+        if (controlService == null) {
+            return false;
+        }
         return controlService.isRunning();
     }
 
