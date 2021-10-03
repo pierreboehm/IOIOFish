@@ -56,7 +56,6 @@ public class StateZoomFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Events.RotationChangedEvent event) {
-        //baseStateView.runServos();
         baseStateView.receiveGyroSignal(event.getPitch());
     }
 
