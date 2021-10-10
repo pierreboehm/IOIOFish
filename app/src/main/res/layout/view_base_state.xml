@@ -52,7 +52,9 @@
             android:layout_alignParentLeft="true"
             android:layerType="hardware"
             android:scaleType="fitXY"
-            android:src="@drawable/iv_stripes_teal_200_quarter" />
+            android:src="@drawable/iv_stripes_teal_200_quarter"
+            android:background="@drawable/rounded_rectangle"
+            android:padding="4dp" />
 
         <ImageView
             android:id="@+id/ivStripesRight"
@@ -63,7 +65,9 @@
             android:layout_alignParentRight="true"
             android:layerType="hardware"
             android:scaleType="fitXY"
-            android:src="@drawable/iv_stripes_teal_200_quarter" />
+            android:src="@drawable/iv_stripes_teal_200_quarter"
+            android:background="@drawable/rounded_rectangle"
+            android:padding="4dp" />
 
     </RelativeLayout>
 
