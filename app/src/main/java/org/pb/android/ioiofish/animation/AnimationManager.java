@@ -27,33 +27,33 @@ public class AnimationManager {
                 0,
                 animationConfiguration.getResourceIds().length - 1,
                 animationConfiguration.getResourceIds(),
-                animationConfiguration.getDuration(),
+                animationConfiguration.getDuration(),       // will later be modified with reaction speed
                 imageView);
     }
 
     public int getPitchLevelStateImageResource(float pitchLevel) {
         if (pitchLevel < 0f) {
-            if (pitchLevel < -5f && pitchLevel >= -10f) {
+            if (pitchLevel < -1f && pitchLevel >= -2f) {
                 return R.drawable.ani_stripes_l1;
-            } else if (pitchLevel < -10f && pitchLevel >= -20f) {
+            } else if (pitchLevel < -2f && pitchLevel >= -4f) {
                 return R.drawable.ani_stripes_l2;
-            } else if (pitchLevel < -20f && pitchLevel >= -30f) {
+            } else if (pitchLevel < -4f && pitchLevel >= -8f) {
                 return R.drawable.ani_stripes_l3;
-            } else if (pitchLevel < -30f && pitchLevel >= -40f) {
+            } else if (pitchLevel < -8f && pitchLevel >= -16f) {
                 return R.drawable.ani_stripes_l4;
-            } else if (pitchLevel < -40f) {
+            } else if (pitchLevel < -16f) {
                 return R.drawable.ani_stripes_l5;
             }
         } else if (pitchLevel > 0f) {
-            if (pitchLevel > 5f && pitchLevel <= 10f) {
+            if (pitchLevel > 1f && pitchLevel <= 2f) {
                 return R.drawable.ani_stripes_r1;
-            } else if (pitchLevel > 10f && pitchLevel <= 20f) {
+            } else if (pitchLevel > 2f && pitchLevel <= 4f) {
                 return R.drawable.ani_stripes_r2;
-            } else if (pitchLevel > 20f && pitchLevel <= 30f) {
+            } else if (pitchLevel > 40f && pitchLevel <= 8f) {
                 return R.drawable.ani_stripes_r3;
-            } else if (pitchLevel > 30f && pitchLevel <= 40f) {
+            } else if (pitchLevel > 8f && pitchLevel <= 16f) {
                 return R.drawable.ani_stripes_r4;
-            } else if (pitchLevel > 40f) {
+            } else if (pitchLevel > 16f) {
                 return R.drawable.ani_stripes_r5;
             }
         }
