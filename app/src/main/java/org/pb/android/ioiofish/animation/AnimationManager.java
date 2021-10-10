@@ -15,6 +15,10 @@ public class AnimationManager {
     private Map<ImageView, ValueAnimator> animatorMap = new HashMap<>();
 
     public void startAnimation(ImageView imageView, AnimationConfiguration animationConfiguration) {
+        startAnimation(imageView, 0f, animationConfiguration);
+    }
+
+    public void startAnimation(ImageView imageView, float pitchLevel, AnimationConfiguration animationConfiguration) {
 
         if (animatorMap.containsKey(imageView)) {
             ValueAnimator animator = animatorMap.get(imageView);
@@ -23,37 +27,39 @@ public class AnimationManager {
             }
         }
 
+        int pitchSpeed = (int) (Math.abs(pitchLevel) * animationConfiguration.getDuration() / 180f);
+
         startAnimation(
                 0,
                 animationConfiguration.getResourceIds().length - 1,
                 animationConfiguration.getResourceIds(),
-                animationConfiguration.getDuration(),       // will later be modified with reaction speed
+                animationConfiguration.getDuration() - pitchSpeed,
                 imageView);
     }
 
     public int getPitchLevelStateImageResource(float pitchLevel) {
         if (pitchLevel < 0f) {
-            if (pitchLevel < -1f && pitchLevel >= -2f) {
+            if (pitchLevel < -5f && pitchLevel >= -10f) {
                 return R.drawable.ani_stripes_l1;
-            } else if (pitchLevel < -2f && pitchLevel >= -4f) {
+            } else if (pitchLevel < -10f && pitchLevel >= -20f) {
                 return R.drawable.ani_stripes_l2;
-            } else if (pitchLevel < -4f && pitchLevel >= -8f) {
+            } else if (pitchLevel < -20f && pitchLevel >= -30f) {
                 return R.drawable.ani_stripes_l3;
-            } else if (pitchLevel < -8f && pitchLevel >= -16f) {
+            } else if (pitchLevel < -30f && pitchLevel >= -40f) {
                 return R.drawable.ani_stripes_l4;
-            } else if (pitchLevel < -16f) {
+            } else if (pitchLevel < -40f) {
                 return R.drawable.ani_stripes_l5;
             }
         } else if (pitchLevel > 0f) {
-            if (pitchLevel > 1f && pitchLevel <= 2f) {
+            if (pitchLevel > 5f && pitchLevel <= 10f) {
                 return R.drawable.ani_stripes_r1;
-            } else if (pitchLevel > 2f && pitchLevel <= 4f) {
+            } else if (pitchLevel > 10f && pitchLevel <= 20f) {
                 return R.drawable.ani_stripes_r2;
-            } else if (pitchLevel > 40f && pitchLevel <= 8f) {
+            } else if (pitchLevel > 20f && pitchLevel <= 30f) {
                 return R.drawable.ani_stripes_r3;
-            } else if (pitchLevel > 8f && pitchLevel <= 16f) {
+            } else if (pitchLevel > 30f && pitchLevel <= 40f) {
                 return R.drawable.ani_stripes_r4;
-            } else if (pitchLevel > 16f) {
+            } else if (pitchLevel > 40f) {
                 return R.drawable.ani_stripes_r5;
             }
         }
