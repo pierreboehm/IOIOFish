@@ -64,6 +64,18 @@ public class Events {
         }
     }
 
+    public static class MissingConnectionEvent {
+        private final int pinNumber;
+
+        public MissingConnectionEvent(int pinNumber) {
+            this.pinNumber = pinNumber;
+        }
+
+        public int getPinNumber() {
+            return pinNumber;
+        }
+    }
+
     public static class ServiceControlEvent {
         public enum ServiceState {
             START, STOP
