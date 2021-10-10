@@ -79,9 +79,9 @@ public class BaseStateView extends LinearLayout {
         setPitchLevelState(pitchLevel);
 
         if (pitchLevel >= 0f) {
-            animationManager.startAnimation(ivLine2, AnimationConfiguration.GYRO_DATA_INCOMING_RIGHT);
+            animationManager.startAnimation(ivLine2, pitchLevel, AnimationConfiguration.GYRO_DATA_INCOMING_RIGHT);
         } else {
-            animationManager.startAnimation(ivLine2, AnimationConfiguration.GYRO_DATA_INCOMING_LEFT);
+            animationManager.startAnimation(ivLine2, pitchLevel, AnimationConfiguration.GYRO_DATA_INCOMING_LEFT);
         }
     }
 
