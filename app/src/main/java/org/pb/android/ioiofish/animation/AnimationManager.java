@@ -39,7 +39,7 @@ public class AnimationManager {
 
     public int getPitchLevelStateImageResource(float pitchLevel) {
         if (pitchLevel < 0f) {
-            if (pitchLevel < -5f && pitchLevel >= -10f) {
+            if (pitchLevel < -1f && pitchLevel >= -10f) {
                 return R.drawable.ani_stripes_l1;
             } else if (pitchLevel < -10f && pitchLevel >= -20f) {
                 return R.drawable.ani_stripes_l2;
@@ -51,7 +51,7 @@ public class AnimationManager {
                 return R.drawable.ani_stripes_l5;
             }
         } else if (pitchLevel > 0f) {
-            if (pitchLevel > 5f && pitchLevel <= 10f) {
+            if (pitchLevel > 1f && pitchLevel <= 10f) {
                 return R.drawable.ani_stripes_r1;
             } else if (pitchLevel > 10f && pitchLevel <= 20f) {
                 return R.drawable.ani_stripes_r2;
