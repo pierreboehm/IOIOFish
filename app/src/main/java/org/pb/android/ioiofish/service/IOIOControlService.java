@@ -85,7 +85,7 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
         rotationDetected = true;
         flowManager.updateRotation(azimuth, pitch, roll);
 
-        if (gyrometer.hasListener()) {
+        if (gyrometer.hasListener() && EventBus.getDefault().hasSubscriberForEvent(Events.RotationChangedEvent.class)) {
             EventBus.getDefault().post(new Events.RotationChangedEvent(azimuth, pitch, roll));
         }
     }
@@ -116,8 +116,10 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
             private PwmOutput leftServo, rightServo;
 
             @Override
-            protected void setup() throws ConnectionLostException {
-                EventBus.getDefault().postSticky(new Events.PluggedStateChangedEvent(true));
+            protected void setup() throws ConnectionLostException, InterruptedException {
+                if (EventBus.getDefault().hasSubscriberForEvent(Events.PluggedStateChangedEvent.class)) {
+                    EventBus.getDefault().postSticky(new Events.PluggedStateChangedEvent(true));
+                }
 
                 Log.d(TAG, "setup");
                 showVersionInformation();
@@ -126,6 +128,9 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
                 setupStatusLed();
                 setupServos();
                 setupSensors();
+
+                // --- TEST HARDWARE ---
+                checkSensors();
             }
 
             @Override
@@ -146,7 +151,9 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
             @Override
             public void disconnected() {
-                EventBus.getDefault().postSticky(new Events.PluggedStateChangedEvent(false));
+                if (EventBus.getDefault().hasSubscriberForEvent(Events.PluggedStateChangedEvent.class)) {
+                    EventBus.getDefault().postSticky(new Events.PluggedStateChangedEvent(false));
+                }
 
                 try {
                     // close all open pins before leave!
@@ -247,8 +254,25 @@ public class IOIOControlService extends IOIOService implements Gyrometer.Rotatio
 
             flowManager.setSensorState(pinNumber, value);
 
-            if (value) {
+            if (value && EventBus.getDefault().hasSubscriberForEvent(Events.SignalLevelReceivedEvent.class)) {
                 EventBus.getDefault().post(new Events.SignalLevelReceivedEvent(pinNumber));
+            }
+        }
+
+        Thread.sleep(DEFAULT_SLEEP_IN_MILLIS);
+    }
+
+    @UiThread
+    public void checkSensors() throws ConnectionLostException, InterruptedException {
+
+        for (Map.Entry<Integer, Closeable> sensor : sensors.entrySet()) {
+            boolean value = ((DigitalInput) sensor.getValue()).read();
+            int pinNumber = sensor.getKey();
+
+            if (!value) {
+                if (EventBus.getDefault().hasSubscriberForEvent(Events.MissingConnectionEvent.class)) {
+                    EventBus.getDefault().postSticky(new Events.MissingConnectionEvent(pinNumber));
+                }
             }
         }
 
