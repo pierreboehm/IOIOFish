@@ -2,32 +2,32 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:drawable="@drawable/ani_line_1"
-        android:duration="100" />
+        android:duration="50" />
     <item
         android:drawable="@drawable/ani_line_2"
-        android:duration="100" />
+        android:duration="50" />
     <item
         android:drawable="@drawable/ani_line_3"
-        android:duration="100" />
+        android:duration="50" />
     <item
         android:drawable="@drawable/ani_line_4"
-        android:duration="100" />
+        android:duration="50" />
     <item
         android:drawable="@drawable/ani_line_5"
-        android:duration="100" />
+        android:duration="50" />
     <item
         android:drawable="@drawable/ani_line_6"
-        android:duration="100" />
+        android:duration="50" />
     <item
         android:drawable="@drawable/ani_line_7"
-        android:duration="100" />
+        android:duration="50" />
     <item
         android:drawable="@drawable/ani_line_8"
-        android:duration="100" />
+        android:duration="50" />
     <item
         android:drawable="@drawable/ani_line_9"
-        android:duration="100" />
+        android:duration="50" />
     <item
         android:drawable="@drawable/ani_line_10"
-        android:duration="100" />
+        android:duration="50" />
 </animation-list>
